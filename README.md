@@ -8,6 +8,12 @@ has, Jev works out whether that is a yes/no, a scale, or a choice, and answers w
 calibrated probabilities. No generative model in the loop, one round trip, a fraction of the
 cost and latency of a sub-agent.
 
+## Demo
+
+An agent planning a workflow, asking Jev one question at a time. Every number is real.
+
+https://github.com/pZacca/askjev/raw/main/assets/askjev-demo.mp4
+
 ## Status
 
 Not published yet. The pipeline works end to end against the live API and the router
