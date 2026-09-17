@@ -1,4 +1,4 @@
-import { colors } from "./theme";
+import { colors, mono } from "./theme";
 import { TerminalContent } from "./TerminalContent";
 
 export const Terminal: React.FC = () => {
@@ -9,17 +9,17 @@ export const Terminal: React.FC = () => {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        borderRadius: 22,
+        borderRadius: 18,
         overflow: "hidden",
         backgroundColor: colors.bg,
-        boxShadow: "0 60px 120px -20px rgba(15, 23, 42, 0.55), 0 30px 60px -30px rgba(15, 23, 42, 0.5)",
-        border: "1px solid rgba(255,255,255,0.08)",
+        border: `1px solid ${colors.line}`,
+        boxShadow: "0 0 0 1px rgba(132,255,176,0.08), 0 40px 90px -20px rgba(0,0,0,0.9), 0 0 120px -40px rgba(132,255,176,0.35)",
       }}
     >
       <div
         style={{
-          height: 64,
-          backgroundColor: "#161C29",
+          height: 62,
+          backgroundColor: colors.bar,
           borderBottom: `1px solid ${colors.line}`,
           display: "flex",
           alignItems: "center",
@@ -27,14 +27,14 @@ export const Terminal: React.FC = () => {
         }}
       >
         <div style={{ display: "flex", gap: 12 }}>
-          <div style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: "#ff5f57" }} />
-          <div style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: "#febc2e" }} />
-          <div style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: "#28c840" }} />
+          <div style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: "#2a2a2a", border: "1px solid #3a3a3a" }} />
+          <div style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: "#2a2a2a", border: "1px solid #3a3a3a" }} />
+          <div style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: colors.accent }} />
         </div>
-        <div style={{ flex: 1, textAlign: "center", color: colors.muted, fontSize: 24, fontFamily: "Inter, system-ui" }}>
+        <div style={{ flex: 1, textAlign: "center", color: colors.muted, fontSize: 24, fontFamily: mono }}>
           planner — askjev
         </div>
-        <div style={{ width: 78 }} />
+        <div style={{ width: 72 }} />
       </div>
       <div style={{ flex: 1, padding: "28px 34px", minHeight: 0 }}>
         <TerminalContent />

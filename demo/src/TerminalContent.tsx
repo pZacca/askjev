@@ -5,7 +5,7 @@ import { colors, mono } from "./theme";
 const BAR = 18;
 const LINE_PX = 27 * 1.55;
 const VISIBLE = 15;
-const tone = { muted: colors.muted, accent: colors.accent, ok: colors.ok, warn: colors.warn, text: colors.text };
+const tone = { muted: colors.fill, accent: colors.accent, ok: colors.ok, warn: colors.warn, text: colors.text };
 
 export const TerminalContent: React.FC = () => {
   const frame = useCurrentFrame();
@@ -60,14 +60,14 @@ export const TerminalContent: React.FC = () => {
               {"  "}
               {l.label.padEnd(19)}
               <span style={{ color: tone[l.color] }}>{"█".repeat(filled)}</span>
-              <span style={{ color: colors.line }}>{"░".repeat(BAR - filled)}</span>
+              <span style={{ color: colors.fill }}>{"░".repeat(BAR - filled)}</span>
               {"  "}
-              <span style={{ color: tone[l.color] }}>{shown.toFixed(2)}</span>
+              <span style={{ color: l.color === "muted" ? colors.muted : tone[l.color] }}>{shown.toFixed(2)}</span>
             </div>
           );
         }
         return (
-          <div key={i} style={{ color: l.color ? tone[l.color] : colors.text, minHeight: "1.55em" }}>
+          <div key={i} style={{ color: l.color === "muted" ? colors.muted : l.color ? tone[l.color] : colors.text, minHeight: "1.55em" }}>
             {l.text}
           </div>
         );

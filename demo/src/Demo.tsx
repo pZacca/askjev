@@ -2,6 +2,7 @@ import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } fr
 import { Logo } from "./Logo";
 import { FLIP_AT } from "./script";
 import { Terminal } from "./Terminal";
+import { colors } from "./theme";
 
 export const DEMO_FRAMES = FLIP_AT + 130;
 
@@ -18,7 +19,7 @@ export const Demo: React.FC = () => {
   const flipRotateX = frame >= FLIP_AT ? interpolate(flipOut, [0, 1], [0, -90]) : 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#EEF2F7", perspective: 1000 }}>
+    <AbsoluteFill style={{ backgroundColor: colors.page, perspective: 1000 }}>
       <Logo from={FLIP_AT + 6} />
       <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", perspective: 1000 }}>
         <div
