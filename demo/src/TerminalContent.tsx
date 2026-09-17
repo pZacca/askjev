@@ -49,7 +49,7 @@ export const TerminalContent: React.FC = () => {
                 <span style={{ color: colors.fill }}>{"░".repeat(BAR - filled)}</span>
                 {"  "}
                 <span style={{ color: c }}>{shown.toFixed(2)}</span>
-                <span style={{ color: colors.muted, opacity: runnerShown }}>{`   ${l.runner} ${l.runnerP.toFixed(2)}`}</span>
+                <span style={{ color: colors.muted, opacity: runnerShown }}>{`  ${l.runner} ${l.runnerP.toFixed(2)}`}</span>
               </div>
             );
           }
