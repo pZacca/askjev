@@ -24,7 +24,7 @@
   "funding": "https://github.com/sponsors/pZacca",
   "type": "module",
   "bin": {
-    "jevmcp": "./dist/cli.js"
+    "jevmcp": "dist/cli.js"
   },
   "files": [
     "dist"
