@@ -1,0 +1,296 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "noul-refund",
+      "branch": "noul",
+      "gate": true,
+      "question": "Does the customer ask for a refund?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-bug",
+      "branch": "noul",
+      "gate": true,
+      "question": "Is this a bug report?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-true",
+      "branch": "noul",
+      "question": "Is the claim in the second paragraph supported by the cited source?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-contains",
+      "branch": "noul",
+      "question": "Does the document mention a deadline?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-should",
+      "branch": "noul",
+      "question": "Should this pull request be merged as is?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-can",
+      "branch": "noul",
+      "question": "Can this function be called with an empty list?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-negation",
+      "branch": "noul",
+      "question": "Is it false that the user already paid?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-paraphrase",
+      "branch": "noul",
+      "question": "Would you say the customer is asking us to give their money back?",
+      "expect": { "kind": "noul" }
+    },
+    {
+      "id": "noul-statement",
+      "branch": "noul",
+      "question": "The reply addresses every point the customer raised.",
+      "expect": { "kind": "noul" }
+    },
+
+    {
+      "id": "rubric-intensity-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How frustrated is the customer?",
+      "expect": { "kind": "score", "rubric": "intensity" }
+    },
+    {
+      "id": "rubric-intensity-2",
+      "branch": "score-rubric",
+      "question": "To what extent does the essay rely on personal anecdotes?",
+      "expect": { "kind": "score", "rubric": "intensity" }
+    },
+    {
+      "id": "rubric-quality-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How well written is this documentation?",
+      "expect": { "kind": "score", "rubric": "quality" }
+    },
+    {
+      "id": "rubric-quality-2",
+      "branch": "score-rubric",
+      "question": "How good is the test coverage described in this PR?",
+      "expect": { "kind": "score", "rubric": "quality" }
+    },
+    {
+      "id": "rubric-severity-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How severe is this bug?",
+      "expect": { "kind": "score", "rubric": "severity" }
+    },
+    {
+      "id": "rubric-severity-2",
+      "branch": "score-rubric",
+      "question": "How much damage would this outage cause?",
+      "expect": { "kind": "score", "rubric": "severity" }
+    },
+    {
+      "id": "rubric-likelihood-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How likely is this customer to churn?",
+      "expect": { "kind": "score", "rubric": "likelihood" }
+    },
+    {
+      "id": "rubric-likelihood-2",
+      "branch": "score-rubric",
+      "question": "What are the chances this change breaks production?",
+      "expect": { "kind": "score", "rubric": "likelihood" }
+    },
+    {
+      "id": "rubric-sentiment-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How positive is the tone of this review?",
+      "expect": { "kind": "score", "rubric": "sentiment" }
+    },
+    {
+      "id": "rubric-sentiment-2",
+      "branch": "score-rubric",
+      "question": "What is the overall sentiment of these comments?",
+      "expect": { "kind": "score", "rubric": "sentiment" }
+    },
+    {
+      "id": "rubric-frequency-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How often does the app crash according to this log?",
+      "expect": { "kind": "score", "rubric": "frequency" }
+    },
+    {
+      "id": "rubric-frequency-2",
+      "branch": "score-rubric",
+      "question": "How frequently does the author use passive voice?",
+      "expect": { "kind": "score", "rubric": "frequency" }
+    },
+    {
+      "id": "rubric-agreement-1",
+      "branch": "score-rubric",
+      "gate": true,
+      "question": "How much does the reviewer agree with the proposal?",
+      "expect": { "kind": "score", "rubric": "agreement" }
+    },
+    {
+      "id": "rubric-agreement-2",
+      "branch": "score-rubric",
+      "question": "Does the second commenter endorse the first commenter's plan, and how strongly?",
+      "expect": { "kind": "score", "rubric": "agreement" }
+    },
+    {
+      "id": "rubric-ambiguous-urgency",
+      "branch": "score-rubric",
+      "question": "How urgent is this ticket?",
+      "expect": { "kind": "score", "rubric": "intensity" },
+      "accept": [
+        { "kind": "score", "rubric": "intensity" },
+        { "kind": "score", "rubric": "severity" }
+      ]
+    },
+    {
+      "id": "rubric-ambiguous-risk",
+      "branch": "score-rubric",
+      "question": "How risky is this deployment?",
+      "expect": { "kind": "score", "rubric": "severity" },
+      "accept": [
+        { "kind": "score", "rubric": "severity" },
+        { "kind": "score", "rubric": "likelihood" },
+        { "kind": "score", "rubric": "intensity" }
+      ]
+    },
+
+    {
+      "id": "missing-which-team",
+      "branch": "choice-missing",
+      "gate": true,
+      "question": "Which team should handle this?",
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "missing-what-product",
+      "branch": "choice-missing",
+      "question": "What product is the customer using?",
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "missing-who",
+      "branch": "choice-missing",
+      "question": "Who is the author of this message?",
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "missing-language",
+      "branch": "choice-missing",
+      "question": "What programming language is this file written in?",
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "missing-category",
+      "branch": "choice-missing",
+      "question": "What category does this ticket belong to?",
+      "expect": { "kind": "choice" }
+    },
+
+    {
+      "id": "choice-team",
+      "branch": "choice-options",
+      "gate": true,
+      "question": "Which team should handle this?",
+      "options": ["billing", "platform", "mobile"],
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "choice-language",
+      "branch": "choice-options",
+      "question": "What language is this?",
+      "options": ["english", "portuguese", "spanish", "other"],
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "choice-intent",
+      "branch": "choice-options",
+      "question": "What does the user want?",
+      "options": ["refund", "rebooking", "information"],
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "choice-two",
+      "branch": "choice-options",
+      "question": "Is this about the frontend or the backend?",
+      "options": ["frontend", "backend"],
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "choice-yes-no-labels",
+      "branch": "choice-options",
+      "question": "Was the issue resolved?",
+      "options": ["yes", "no", "unclear"],
+      "expect": { "kind": "choice" }
+    },
+    {
+      "id": "choice-misleading-order",
+      "branch": "choice-options",
+      "question": "Which region is this order shipping to?",
+      "options": ["north", "east", "south", "west"],
+      "expect": { "kind": "choice" }
+    },
+
+    {
+      "id": "score-urgency",
+      "branch": "score-options",
+      "gate": true,
+      "question": "How urgent is this?",
+      "options": ["can wait", "this week", "today"],
+      "expect": { "kind": "score" }
+    },
+    {
+      "id": "score-stars",
+      "branch": "score-options",
+      "question": "Rate this review",
+      "options": ["1 star", "2 stars", "3 stars", "4 stars", "5 stars"],
+      "expect": { "kind": "score" }
+    },
+    {
+      "id": "score-size",
+      "branch": "score-options",
+      "question": "How big is this change?",
+      "options": ["trivial", "small", "medium", "large"],
+      "expect": { "kind": "score" }
+    },
+    {
+      "id": "score-two-levels",
+      "branch": "score-options",
+      "question": "How confident is the author?",
+      "options": ["hesitant", "confident"],
+      "expect": { "kind": "score" },
+      "accept": [{ "kind": "score" }, { "kind": "choice" }]
+    },
+    {
+      "id": "score-priority",
+      "branch": "score-options",
+      "question": "What priority should this get?",
+      "options": ["P3", "P2", "P1", "P0"],
+      "expect": { "kind": "score" }
+    },
+    {
+      "id": "score-seniority",
+      "branch": "score-options",
+      "question": "Which seniority level does this candidate fit?",
+      "options": ["junior", "mid", "senior", "staff"],
+      "expect": { "kind": "score" },
+      "accept": [{ "kind": "score" }, { "kind": "choice" }]
+    }
+  ]
+}
