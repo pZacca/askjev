@@ -3,6 +3,8 @@ export type Bar = { label: string; p: number };
 
 export type QuestionData = {
   question: string;
+  /** Shorter wording for the terminal line; same question. */
+  short: string;
   options?: string[];
   kind: "yes/no" | "scale" | "choice";
   answer: string;
@@ -14,6 +16,7 @@ export type QuestionData = {
 export const QUESTIONS: QuestionData[] = [
   {
     question: "Can this task be safely worked on by several agents in parallel?",
+    short: "Can this run safely in parallel?",
     kind: "yes/no",
     answer: "0.46",
     confidence: 0.46,
@@ -25,6 +28,7 @@ export const QUESTIONS: QuestionData[] = [
   },
   {
     question: "How many agents should this task be split across?",
+    short: "How many agents?",
     options: ["1", "2", "3", "4+"],
     kind: "scale",
     answer: "3",
@@ -38,6 +42,7 @@ export const QUESTIONS: QuestionData[] = [
   },
   {
     question: "How should the work be split between agents?",
+    short: "How to split the work?",
     options: ["by file", "by layer", "by feature"],
     kind: "choice",
     answer: "by layer",
@@ -50,6 +55,7 @@ export const QUESTIONS: QuestionData[] = [
   },
   {
     question: "Which model is the right fit to implement this task?",
+    short: "Which model fits?",
     options: ["claude-haiku-4-5", "claude-sonnet-5", "claude-opus-5", "claude-fable-5-1"],
     kind: "choice",
     answer: "claude-opus-5",
@@ -63,6 +69,7 @@ export const QUESTIONS: QuestionData[] = [
   },
   {
     question: "How much reasoning effort does this task need?",
+    short: "How much effort?",
     options: ["low", "medium", "high", "xhigh", "max"],
     kind: "scale",
     answer: "xhigh",
