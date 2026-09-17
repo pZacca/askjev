@@ -50,7 +50,7 @@ export const buildScript = (): Line[] => {
       ask: 'ask "How to split the work?" [file/layer/feature]',
       answer: "by layer",
       p: 0.62,
-      runner: "by feature",
+      runner: "feature",
       runnerP: 0.35,
       then: "One agent per layer. Which model runs them?",
     },
