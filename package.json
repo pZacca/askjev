@@ -21,6 +21,7 @@
   "bugs": {
     "url": "https://github.com/pZacca/jevmcp/issues"
   },
+  "funding": "https://github.com/sponsors/pZacca",
   "type": "module",
   "bin": {
     "jevmcp": "./dist/cli.js"
