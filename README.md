@@ -12,7 +12,9 @@ cost and latency of a sub-agent.
 
 An agent planning a workflow, asking Jev one question at a time. Every number is real.
 
-https://github.com/pZacca/askjev/raw/main/assets/askjev-demo.mp4
+![An agent asks askjev five questions in a terminal and gets probabilities back](assets/askjev-demo.gif)
+
+[Watch the MP4](assets/askjev-demo.mp4).
 
 ## Status
 
