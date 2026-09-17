@@ -1,0 +1,58 @@
+{
+  "name": "jevmcp",
+  "version": "0.0.0",
+  "description": "Unofficial MCP server for Jev, Typesafe AI's System One model. Ask free-text questions; Jev routes them to choice, score, or yes/no and answers with calibrated probabilities.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "jev",
+    "typesafe",
+    "typesafe-ai",
+    "system-one",
+    "agents"
+  ],
+  "license": "MIT",
+  "author": "Pedro Zaccaria",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pZacca/jevmcp.git"
+  },
+  "homepage": "https://github.com/pZacca/jevmcp#readme",
+  "bugs": {
+    "url": "https://github.com/pZacca/jevmcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "jevmcp": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "eval": "tsx eval/run.ts",
+    "smoke": "tsx test/smoke/run.ts",
+    "prepack": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@typesafe-ai/sdk": "^0.6.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.14",
+    "@types/node": "^22.20.3",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}
