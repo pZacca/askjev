@@ -6,5 +6,3 @@ dist/
 .claude/
 .vscode/
 eval/report/
-.agents/
-skills-lock.json
