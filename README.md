@@ -10,8 +10,8 @@ cost and latency of a sub-agent.
 
 ## Status
 
-Work in progress. The design is settled and documented in
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). The router is not implemented yet.
+Not published yet. The pipeline works end to end against the live API and the router
+scores 100% on the first evaluation dataset. See [docs/EVAL.md](docs/EVAL.md).
 
 ## Install
 
