@@ -14,8 +14,6 @@ An agent planning a workflow, asking Jev one question at a time. Every number is
 
 ![An agent asks askjev five questions in a terminal and gets probabilities back](assets/askjev-demo.gif)
 
-[Watch the MP4](assets/askjev-demo.mp4).
-
 ## Status
 
 Not published yet. The pipeline works end to end against the live API and the router
