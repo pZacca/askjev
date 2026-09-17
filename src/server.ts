@@ -22,7 +22,7 @@ Every answer carries probabilities and Jev's confidence, plus "routing" showing 
 Requires TYPESAFE_API_KEY in the server's environment.`;
 
 export function createServer(jev: Jev, version: string): McpServer {
-  const server = new McpServer({ name: "jevmcp", version });
+  const server = new McpServer({ name: "askjev", version });
 
   server.registerTool(
     "ask",
@@ -51,7 +51,7 @@ export function createServer(jev: Jev, version: string): McpServer {
 
 export function describeError(error: unknown): string {
   if (error instanceof AuthenticationError) {
-    return "Jev rejected the API key. Set TYPESAFE_API_KEY in the environment of the jevmcp process.";
+    return "Jev rejected the API key. Set TYPESAFE_API_KEY in the environment of the askjev process.";
   }
   if (error instanceof APIError) {
     const id = error.requestId ? ` (request ${error.requestId})` : "";

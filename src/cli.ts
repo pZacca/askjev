@@ -14,6 +14,6 @@ async function main(): Promise<void> {
 
 main().catch((error: unknown) => {
   // stdout is the MCP protocol channel; diagnostics go to stderr.
-  console.error(`jevmcp: ${error instanceof Error ? error.message : String(error)}`);
+  console.error(`askjev: ${error instanceof Error ? error.message : String(error)}`);
   process.exit(1);
 });

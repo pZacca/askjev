@@ -1,5 +1,5 @@
 {
-  "name": "jevmcp",
+  "name": "askjev",
   "version": "0.0.0",
   "description": "Unofficial MCP server for Jev, Typesafe AI's System One model. Ask free-text questions; Jev routes them to choice, score, or yes/no and answers with calibrated probabilities.",
   "keywords": [
@@ -15,16 +15,16 @@
   "author": "Pedro Zaccaria",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pZacca/jevmcp.git"
+    "url": "git+https://github.com/pZacca/askjev.git"
   },
-  "homepage": "https://github.com/pZacca/jevmcp#readme",
+  "homepage": "https://github.com/pZacca/askjev#readme",
   "bugs": {
-    "url": "https://github.com/pZacca/jevmcp/issues"
+    "url": "https://github.com/pZacca/askjev/issues"
   },
   "funding": "https://github.com/sponsors/pZacca",
   "type": "module",
   "bin": {
-    "jevmcp": "dist/cli.js"
+    "askjev": "dist/cli.js"
   },
   "files": [
     "dist"

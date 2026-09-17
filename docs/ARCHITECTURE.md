@@ -1,6 +1,6 @@
 # Architecture
 
-`jevmcp` is an MCP server that gives an agent a fast, cheap judgment call. The agent asks
+`askjev` is an MCP server that gives an agent a fast, cheap judgment call. The agent asks
 free-text questions about some material it already has. The server asks Jev to decide what
 kind of question each one is, asks Jev to answer it, and returns calibrated probabilities
 the agent can act on. No generative model sits in the loop.
@@ -125,19 +125,19 @@ batches every question that needs it into a single `systemone` request.
 ```mermaid
 sequenceDiagram
     participant Agent
-    participant jevmcp
+    participant askjev
     participant Jev
 
-    Agent->>jevmcp: ask(state, questions[])
-    jevmcp->>Jev: systemone(state = {q0, q1, ...}, questions = {q0: choice(kind), q1: choice(kind), ...})
-    Jev-->>jevmcp: kind + confidence per question
+    Agent->>askjev: ask(state, questions[])
+    askjev->>Jev: systemone(state = {q0, q1, ...}, questions = {q0: choice(kind), q1: choice(kind), ...})
+    Jev-->>askjev: kind + confidence per question
     opt any scale without options
-        jevmcp->>Jev: systemone(state = {q1, ...}, questions = {q1: choice(rubric), ...})
-        Jev-->>jevmcp: rubric + confidence per question
+        askjev->>Jev: systemone(state = {q1, ...}, questions = {q1: choice(rubric), ...})
+        Jev-->>askjev: rubric + confidence per question
     end
-    jevmcp->>Jev: systemone(state = agent's state, questions = typed questions)
-    Jev-->>jevmcp: answers + usage
-    jevmcp-->>Agent: answers[] with routing metadata
+    askjev->>Jev: systemone(state = agent's state, questions = typed questions)
+    Jev-->>askjev: answers + usage
+    askjev-->>Agent: answers[] with routing metadata
 ```
 
 ### Routing table

@@ -1,6 +1,6 @@
 # Router evaluation
 
-The router is the part of `jevmcp` that can be wrong in a way unit tests cannot catch: Jev
+The router is the part of `askjev` that can be wrong in a way unit tests cannot catch: Jev
 may decide a question is a scale when it was a yes/no. This evaluation measures that
 against the live API.
 

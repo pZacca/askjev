@@ -1,4 +1,4 @@
-# jevmcp
+# askjev
 
 Unofficial [MCP](https://modelcontextprotocol.io) server for [Jev](https://docs.typesafe.ai),
 Typesafe AI's System One model. Not affiliated with Typesafe AI.
@@ -20,7 +20,7 @@ Requires Node 22+ and a Typesafe API key in `TYPESAFE_API_KEY`.
 Claude Code:
 
 ```sh
-claude mcp add jevmcp -e TYPESAFE_API_KEY=your-key -- npx -y jevmcp
+claude mcp add askjev -e TYPESAFE_API_KEY=your-key -- npx -y askjev
 ```
 
 Claude Desktop, Cursor, and other clients that take a JSON config:
@@ -28,9 +28,9 @@ Claude Desktop, Cursor, and other clients that take a JSON config:
 ```json
 {
   "mcpServers": {
-    "jevmcp": {
+    "askjev": {
       "command": "npx",
-      "args": ["-y", "jevmcp"],
+      "args": ["-y", "askjev"],
       "env": { "TYPESAFE_API_KEY": "your-key" }
     }
   }
@@ -38,7 +38,7 @@ Claude Desktop, Cursor, and other clients that take a JSON config:
 ```
 
 On Windows some hosts cannot launch `npx` directly. Use `"command": "cmd"` with
-`"args": ["/c", "npx", "-y", "jevmcp"]`.
+`"args": ["/c", "npx", "-y", "askjev"]`.
 
 ## The tool
 

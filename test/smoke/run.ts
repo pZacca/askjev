@@ -31,7 +31,7 @@ function fail(msg: string): never {
   process.exit(1);
 }
 
-const work = mkdtempSync(join(tmpdir(), "jevmcp-smoke-"));
+const work = mkdtempSync(join(tmpdir(), "askjev-smoke-"));
 let stub: Awaited<ReturnType<typeof startStub>> | undefined;
 let transport: StdioClientTransport | undefined;
 try {
@@ -49,10 +49,10 @@ try {
     install,
     "node_modules",
     ".bin",
-    process.platform === "win32" ? "jevmcp.cmd" : "jevmcp",
+    process.platform === "win32" ? "askjev.cmd" : "askjev",
   );
   if (!existsSync(shim)) fail(`bin shim not created at ${shim}`);
-  const entry = join(install, "node_modules", "jevmcp", "dist", "cli.js");
+  const entry = join(install, "node_modules", "askjev", "dist", "cli.js");
   if (!existsSync(entry)) fail(`entrypoint missing at ${entry}`);
 
   stub = await startStub();

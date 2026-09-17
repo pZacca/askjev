@@ -40,7 +40,7 @@ export async function ask(jev: Jev, input: AskInput): Promise<AskOutput> {
   const routed: Routed[] = questions.map((_, i) => {
     const a = routingResult.answers[key(i)];
     if (a?.type !== "choice")
-      throw new Error(`jevmcp: routing answer for ${key(i)} is missing or malformed`);
+      throw new Error(`askjev: routing answer for ${key(i)} is missing or malformed`);
     return readRouting(a);
   });
 
@@ -55,7 +55,7 @@ export async function ask(jev: Jev, input: AskInput): Promise<AskOutput> {
     for (const i of needRubric) {
       const a = pickResult.answers[key(i)];
       if (a?.type !== "choice")
-        throw new Error(`jevmcp: rubric answer for ${key(i)} is missing or malformed`);
+        throw new Error(`askjev: rubric answer for ${key(i)} is missing or malformed`);
       picked.set(i, readRubricPick(a));
     }
   }
@@ -90,7 +90,7 @@ export async function ask(jev: Jev, input: AskInput): Promise<AskOutput> {
       return null;
     }
     const rubric = picked.get(i);
-    if (!rubric) throw new Error(`jevmcp: no rubric was picked for ${key(i)}`);
+    if (!rubric) throw new Error(`askjev: no rubric was picked for ${key(i)}`);
     typed[key(i)] = score(q.question, RUBRICS[rubric.name]);
     return null;
   });
@@ -104,7 +104,7 @@ export async function ask(jev: Jev, input: AskInput): Promise<AskOutput> {
       if (answers[i]) return;
       const r = routed[i];
       const a = result.answers[key(i)];
-      if (!r || !a) throw new Error(`jevmcp: answer for ${key(i)} is missing`);
+      if (!r || !a) throw new Error(`askjev: answer for ${key(i)} is missing`);
       answers[i] = shape(a, r, q.options ? undefined : picked.get(i));
     });
   }
@@ -113,7 +113,7 @@ export async function ask(jev: Jev, input: AskInput): Promise<AskOutput> {
     model,
     usage,
     answers: answers.map((a, i) => {
-      if (!a) throw new Error(`jevmcp: no answer was produced for ${key(i)}`);
+      if (!a) throw new Error(`askjev: no answer was produced for ${key(i)}`);
       return a;
     }),
   };
