@@ -91,10 +91,19 @@ const choiceAnswerSchema = z.object({
   routing: routingSchema,
 });
 
+const errorAnswerSchema = z.object({
+  kind: z.literal("error"),
+  message: z.string().describe("Why this question could not be answered, and what to change."),
+  routing: routingSchema
+    .optional()
+    .describe("Present when the question was routed before the error was detected."),
+});
+
 export const answerSchema = z.discriminatedUnion("kind", [
   noulAnswerSchema,
   scoreAnswerSchema,
   choiceAnswerSchema,
+  errorAnswerSchema,
 ]);
 
 export const askOutputShape = {
@@ -102,7 +111,11 @@ export const askOutputShape = {
   usage: z
     .object({ input_tokens: z.number(), output_tokens: z.number() })
     .describe("Token usage summed over every Jev call made."),
-  answers: z.array(answerSchema).describe("One entry per question, in input order."),
+  answers: z
+    .array(answerSchema)
+    .describe(
+      'One entry per question, in input order. A question that could not be answered has kind "error"; the others are still answered.',
+    ),
 };
 
 export const askOutputSchema = z.object(askOutputShape);

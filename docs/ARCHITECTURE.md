@@ -79,6 +79,17 @@ One entry per question, in input order.
 }
 ```
 
+A question that cannot be answered does not fail the batch. Its entry has `kind: "error"`
+and a message saying what to change, and every other question is still answered:
+
+```jsonc
+{
+  "kind": "error",
+  "message": "\"Which team owns it?\" asks to pick between alternatives, but no options were given. Pass options with the alternatives.",
+  "routing": { "kind": "choice", "confidence": 0.95 }
+}
+```
+
 Everything is raw. There is no threshold and no verdict. `confidence` comes straight from
 Jev; yes/no answers have no separate confidence because the probability is the signal.
 `routing` exposes how sure Jev was about the question type, and about the rubric when one
@@ -135,7 +146,7 @@ sequenceDiagram
 |---|---|---|
 | 2+ items | choice, score | `choice` with options as labels, or `score` with options as ordered rubric |
 | absent | noul, score, choice | `noul`; `score` after picking a built-in rubric; or an error asking for options |
-| 1 item | not routed | error: one option is not a choice, use a yes/no question or add options |
+| 1 item | rejected by schema validation | never reaches the router |
 
 The router's `state` is the question text itself (an object keyed by question when
 batching), and its instructions ask which kind of question that text is. The routing
@@ -164,13 +175,15 @@ The list is fixed in code. Configurable rubrics are a possible later addition.
 | Situation | Behaviour |
 |---|---|
 | Input fails schema validation | Tool error with the Zod message. Jev is not called. |
-| Question routed to `choice` with no options | Tool error naming the question and asking for `options`. Nothing else in the batch is answered, because the batch is one request and partial results would be ambiguous. |
+| Question routed to `choice` with no options | That entry becomes `kind: "error"` asking for `options`. The rest of the batch is answered normally. |
 | Jev returns 401 | Tool error: API key missing or invalid, with the env var name. |
 | Jev returns 422, 429 after retries, 5xx | Tool error with status, Jev's message, and the request id when present. |
 | Network or timeout after retries | Tool error with the SDK's message. |
 
-Errors are returned as MCP tool results with `isError: true`, not as protocol errors, so
-the agent sees the message and can recover.
+Errors that affect the whole call are returned as MCP tool results with `isError: true`,
+not as protocol errors, so the agent sees the message and can recover. Errors that affect
+one question are entries in `answers`, so one bad question never costs the agent the
+others.
 
 ## Configuration
 
@@ -228,6 +241,11 @@ wasted by a single-question tool.
 **Built-in rubrics chosen by Jev over an instructive error.** Most scale questions from an
 agent are "how X is this", and a generic five-level rubric answers them. The `note` field
 says a generic rubric was used so the agent can do better next time.
+
+**Per-question errors over failing the batch.** A batch is one request, but the questions
+are independent from the agent's point of view. Failing everything because one question
+lacked options would make the agent re-send the whole batch. An error entry in the array
+keeps input and output aligned by position and lets the agent fix one thing.
 
 **One tool over `ask` plus `list_rubrics` and `list_models`.** Both lists are static and
 fit in the tool description. Every extra tool costs context in every client that connects.
