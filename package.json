@@ -1,6 +1,6 @@
 {
   "name": "askjev",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unofficial MCP server for Jev, Typesafe AI's System One model. Ask free-text questions; Jev routes them to choice, score, or yes/no and answers with calibrated probabilities.",
   "keywords": [
     "mcp",
