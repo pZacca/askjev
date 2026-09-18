@@ -294,8 +294,18 @@ npm test
 ```
 
 The hosted variant is `src/worker.ts`, bundled and deployed by wrangler from
-`wrangler.jsonc`. `npm run dev` serves it on localhost; `npm run deploy` publishes it to
-the configured domain (needs `wrangler login`).
+`wrangler.jsonc`. `npm run dev` serves it on localhost. Every push to `main` that passes
+CI is deployed to jev.zacca.dev by the `deploy` job in `ci.yml`; `npm run deploy` does
+the same by hand (needs `wrangler login`).
+
+Releases are tag-driven. Bump the version in `package.json`, commit, then:
+
+```sh
+git tag v0.2.0 && git push origin main v0.2.0
+```
+
+`release.yml` checks that the tag matches `package.json`, runs the full test suite,
+publishes to npm with provenance, and creates the GitHub release with generated notes.
 
 The Smithery listing points at that domain and takes its configuration form from
 `smithery.schema.json`. After changing the schema, republish with
