@@ -3,11 +3,11 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { AuthenticationError } from "@typesafe-ai/sdk";
 import { describe, expect, it } from "vitest";
 import type { Jev } from "../src/jev.js";
-import { createServer } from "../src/server.js";
+import { createServer, type ServerOptions } from "../src/server.js";
 import { fakeJev, route } from "./fake-jev.js";
 
-async function connect(jev: Jev) {
-  const server = createServer(jev, "0.0.0-test");
+async function connect(jev: Jev, options: ServerOptions = {}) {
+  const server = createServer(jev, "0.0.0-test", options);
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   const client = new Client({ name: "test", version: "0" });
   await server.connect(serverTransport);
@@ -38,10 +38,46 @@ describe("MCP server", () => {
     });
 
     expect(result.isError).toBeFalsy();
-    expect(result.structuredContent).toMatchObject({
-      model: "jev-test",
-      answers: [{ kind: "noul", answer: 0.9 }],
+    expect(result.structuredContent).toEqual({
+      answers: [
+        {
+          kind: "noul",
+          answer: 0.9,
+          probabilities: { yes: 0.9, no: expect.closeTo(0.1) },
+          routing: { kind: "noul", confidence: 0.9 },
+        },
+      ],
     });
+  });
+
+  it("emits model and usage, and drops routing, as configured", async () => {
+    const { jev } = fakeJev([{ q0: route("noul") }, { q0: { type: "noul", noul: 0.9 } }]);
+    const client = await connect(jev, { include: ["model", "usage"] });
+
+    const result = await client.callTool({
+      name: "ask",
+      arguments: { state: "s", questions: [{ question: "Yes?" }] },
+    });
+
+    expect(result.structuredContent).toEqual({
+      model: "jev-test",
+      usage: { input_tokens: 20, output_tokens: 2 },
+      answers: [
+        { kind: "noul", answer: 0.9, probabilities: { yes: 0.9, no: expect.closeTo(0.1) } },
+      ],
+    });
+  });
+
+  it("describes the configured output in the tool description", async () => {
+    const byDefault = await connect(fakeJev([]).jev);
+    const defaultText = (await byDefault.listTools()).tools[0]?.description ?? "";
+    expect(defaultText).toContain('"routing"');
+    expect(defaultText).not.toContain('"usage"');
+
+    const bare = await connect(fakeJev([]).jev, { include: ["usage"] });
+    const bareText = (await bare.listTools()).tools[0]?.description ?? "";
+    expect(bareText).not.toContain('"routing"');
+    expect(bareText).toContain('"usage"');
   });
 
   it("rejects invalid input before calling Jev", async () => {

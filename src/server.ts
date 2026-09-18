@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { APIError, AuthenticationError, TypeSafeError } from "@typesafe-ai/sdk";
 import { ask } from "./ask.js";
+import { DEFAULT_INCLUDE, type IncludeField, trimOutput } from "./include.js";
 import type { Jev } from "./jev.js";
 import { RUBRICS } from "./rubrics.js";
 import { askInputShape, askOutputShape } from "./schema.js";
@@ -17,9 +18,23 @@ Write each question in plain language. Jev decides whether it is a yes/no questi
 - Scale: pass "options" as ordered levels, lowest first. "How urgent is this?" with options ["can wait", "this week", "today"]. Without options, a built-in rubric is picked for you:
 ${rubricLines}
 
-Every answer carries probabilities and Jev's confidence, plus "routing" showing how the question was interpreted. Read the confidence: a low value means the material does not settle the question, so add context or decide another way.
+`;
 
-Requires a Typesafe API key. `;
+/** The sentence about the result shape depends on what the operator chose to include. */
+function describeOutput(include: readonly IncludeField[]): string {
+  const keep = new Set(include);
+  const parts = ["Every answer carries probabilities and Jev's confidence"];
+  if (keep.has("routing")) {
+    parts.push(
+      'plus "routing" showing how the question was interpreted and how sure Jev was about that',
+    );
+  }
+  const extras = [keep.has("model") ? '"model"' : "", keep.has("usage") ? '"usage" (tokens)' : ""]
+    .filter(Boolean)
+    .join(" and ");
+  const extraLine = extras ? ` The result also carries ${extras}.` : "";
+  return `${parts.join(", ")}.${extraLine} Read the confidence: a low value means the material does not settle the question, so add context or decide another way.`;
+}
 
 /** How the caller supplies the Typesafe API key when nothing else is said: the stdio way. */
 export const ENV_KEY_HINT = "Set TYPESAFE_API_KEY in the environment of the askjev process.";
@@ -27,24 +42,27 @@ export const ENV_KEY_HINT = "Set TYPESAFE_API_KEY in the environment of the askj
 export interface ServerOptions {
   /** Shown at the end of the tool description and in auth errors. Default: `ENV_KEY_HINT`. */
   keyHint?: string;
+  /** Optional result parts to emit. Default: `DEFAULT_INCLUDE`. See `parseInclude`. */
+  include?: readonly IncludeField[];
 }
 
 export function createServer(jev: Jev, version: string, options: ServerOptions = {}): McpServer {
   const keyHint = options.keyHint ?? ENV_KEY_HINT;
+  const include = options.include ?? DEFAULT_INCLUDE;
   const server = new McpServer({ name: "askjev", version });
 
   server.registerTool(
     "ask",
     {
       title: "Ask Jev",
-      description: description + keyHint,
+      description: `${description}\n${describeOutput(include)}\n\nRequires a Typesafe API key. ${keyHint}`,
       inputSchema: askInputShape,
       outputSchema: askOutputShape,
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
     async (input) => {
       try {
-        const output = await ask(jev, input);
+        const output = trimOutput(await ask(jev, input), include);
         return {
           content: [{ type: "text", text: JSON.stringify(output) }],
           structuredContent: output,

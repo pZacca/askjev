@@ -63,6 +63,24 @@ describe("HTTP handler", () => {
     expect(keys).toEqual(["key-1"]);
   });
 
+  it("applies the configured include list to every caller", async () => {
+    const handler = createHttpHandler({
+      version: "0.0.0-test",
+      include: ["model"],
+      jevFor: () => askYes(),
+    });
+    const client = await connect(handler, { [API_KEY_HEADER]: "key-1" });
+
+    const result = await callAsk(client);
+
+    expect(result.structuredContent).toEqual({
+      model: "jev-test",
+      answers: [
+        { kind: "noul", answer: 0.9, probabilities: { yes: 0.9, no: expect.closeTo(0.1) } },
+      ],
+    });
+  });
+
   it("accepts a bearer token when the header is absent", async () => {
     const { handler, keys } = handlerFor(askYes());
     const client = await connect(handler, { Authorization: "Bearer key-2" });

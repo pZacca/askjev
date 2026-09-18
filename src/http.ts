@@ -1,4 +1,5 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
+import type { IncludeField } from "./include.js";
 import { createJev, type Jev } from "./jev.js";
 import { createServer } from "./server.js";
 
@@ -16,6 +17,8 @@ export interface HttpOptions {
   baseURL?: string | undefined;
   /** Default Jev model forwarded to every client. Default: the SDK's. */
   defaultModel?: string | undefined;
+  /** Optional result parts to emit, for every caller. Default: routing only. */
+  include?: readonly IncludeField[] | undefined;
   /** Builds the Jev adapter for one request's key. Tests inject a fake. */
   jevFor?: (apiKey: string) => Jev;
 }
@@ -64,7 +67,10 @@ export function createHttpHandler(options: HttpOptions): HttpHandler {
 
     const apiKey = readApiKey(request.headers);
     const jev = apiKey ? lazyJev(() => jevFor(apiKey)) : missingKeyJev;
-    const server = createServer(jev, options.version, { keyHint: KEY_HINT });
+    const server = createServer(jev, options.version, {
+      keyHint: KEY_HINT,
+      ...(options.include ? { include: options.include } : {}),
+    });
     // No sessionIdGenerator: stateless, one transport per request.
     const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });
     await server.connect(transport);

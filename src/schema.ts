@@ -53,6 +53,7 @@ export type AskInput = z.infer<typeof askInputSchema>;
 export const kindSchema = z.enum(["noul", "score", "choice"]);
 export type Kind = z.infer<typeof kindSchema>;
 
+/** How Jev interpreted the question. Emitted when the server is configured to include routing. */
 const routingSchema = z.object({
   kind: kindSchema.describe("The question type Jev routed this question to."),
   confidence: z.number().describe("Jev's confidence in that routing."),
@@ -66,7 +67,7 @@ const noulAnswerSchema = z.object({
   kind: z.literal("noul"),
   answer: z.number().describe("Probability that the answer is yes, from 0 to 1."),
   probabilities: z.object({ yes: z.number(), no: z.number() }),
-  routing: routingSchema,
+  routing: routingSchema.optional(),
 });
 
 const scoreAnswerSchema = z.object({
@@ -80,7 +81,7 @@ const scoreAnswerSchema = z.object({
     .string()
     .optional()
     .describe("Advice when a built-in rubric was used instead of caller options."),
-  routing: routingSchema,
+  routing: routingSchema.optional(),
 });
 
 const choiceAnswerSchema = z.object({
@@ -88,7 +89,7 @@ const choiceAnswerSchema = z.object({
   answer: z.string().describe("The selected option."),
   probabilities: z.record(z.string(), z.number()).describe("Probability per option."),
   confidence: z.number(),
-  routing: routingSchema,
+  routing: routingSchema.optional(),
 });
 
 const errorAnswerSchema = z.object({
@@ -96,7 +97,9 @@ const errorAnswerSchema = z.object({
   message: z.string().describe("Why this question could not be answered, and what to change."),
   routing: routingSchema
     .optional()
-    .describe("Present when the question was routed before the error was detected."),
+    .describe(
+      "Present when routing is configured and the question was routed before the error was detected.",
+    ),
 });
 
 export const answerSchema = z.discriminatedUnion("kind", [
@@ -107,10 +110,11 @@ export const answerSchema = z.discriminatedUnion("kind", [
 ]);
 
 export const askOutputShape = {
-  model: z.string().describe("The Jev model that answered."),
+  model: z.string().optional().describe("The Jev model that answered. Present when configured."),
   usage: z
     .object({ input_tokens: z.number(), output_tokens: z.number() })
-    .describe("Token usage summed over every Jev call made."),
+    .optional()
+    .describe("Token usage summed over every Jev call made. Present when configured."),
   answers: z
     .array(answerSchema)
     .describe(

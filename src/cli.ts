@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 import { createRequire } from "node:module";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { INCLUDE_ENV, parseInclude } from "./include.js";
 import { createJev } from "./jev.js";
 import { createServer } from "./server.js";
 
 const { version } = createRequire(import.meta.url)("../package.json") as { version: string };
 
 async function main(): Promise<void> {
+  const include = parseInclude(process.env[INCLUDE_ENV]);
   const jev = createJev();
-  const server = createServer(jev, version);
+  const server = createServer(jev, version, { include });
   await server.connect(new StdioServerTransport());
 }
 
