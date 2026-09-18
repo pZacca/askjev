@@ -41,8 +41,6 @@ One entry per question, in input order.
 
 ```jsonc
 {
-  "model": "jev-1.13",
-  "usage": { "input_tokens": 812, "output_tokens": 64 },
   "answers": [
     {
       "kind": "noul",
@@ -94,6 +92,12 @@ Everything is raw. There is no threshold and no verdict. `confidence` comes stra
 Jev; yes/no answers have no separate confidence because the probability is the signal.
 `routing` exposes how sure Jev was about the question type, and about the rubric when one
 was picked, so a misroute is visible rather than silent.
+
+What else comes back is the operator's choice, not the agent's. `ASKJEV_INCLUDE` is a
+comma-separated list of the optional parts: `routing` (the default), `usage` (tokens summed
+over every Jev call), and `model`. Set it to `usage,routing` to add token counts, or to an
+empty string to get nothing but the answers. The tool description tells the agent what the
+server was configured to emit.
 
 ## Pipeline
 
@@ -215,11 +219,17 @@ Local, only what the Typesafe SDK already reads from the environment:
 | `TYPESAFE_BASE_URL` | Optional, for proxies and the smoke test stub. |
 | `TYPESAFE_LOG_LEVEL` | Optional. SDK logs go to stderr. |
 
-The server itself has no settings. stdout carries MCP protocol messages only; every
-diagnostic goes to stderr.
+Plus one setting of the server's own:
 
-Hosted, the key travels per request (see Transports). `TYPESAFE_BASE_URL` and
-`TYPESAFE_DEFAULT_MODEL` can be set as Worker vars and apply to every caller.
+| Variable | Meaning |
+|---|---|
+| `ASKJEV_INCLUDE` | Optional parts of every result, comma-separated: `model`, `usage`, `routing`. Default `routing`. Empty string for answers only. An unknown name is a startup error. |
+
+stdout carries MCP protocol messages only; every diagnostic goes to stderr.
+
+Hosted, the key travels per request (see Transports). `TYPESAFE_BASE_URL`,
+`TYPESAFE_DEFAULT_MODEL` and `ASKJEV_INCLUDE` can be set as Worker vars and apply to every
+caller.
 
 ## Modules
 
@@ -230,6 +240,7 @@ Hosted, the key travels per request (see Transports). `TYPESAFE_BASE_URL` and
 | `src/worker.ts` | Cloudflare Workers entry over `http.ts`. Bundled by wrangler, not by tsc. |
 | `src/server.ts` | Creates the `McpServer`, registers `ask`, maps thrown errors to tool errors. |
 | `src/schema.ts` | Zod schemas for the tool input and output, and the TypeScript types derived from them. |
+| `src/include.ts` | Parses `ASKJEV_INCLUDE` and trims the pipeline's full output down to what was configured. |
 | `src/ask.ts` | The pipeline: route, pick rubrics, answer, shape. Pure orchestration over a `Jev` adapter. |
 | `src/router.ts` | Builds the routing and rubric-selection questions and interprets Jev's answers. |
 | `src/rubrics.ts` | The built-in rubric table. |
@@ -251,8 +262,16 @@ is the smallest thing the agent must do to keep a generative model out of the lo
 
 **Raw output over a built-in verdict.** A threshold with `verdict: "confident" | "uncertain"`
 was considered. Every agent and task has a different cost of being wrong, so the threshold
-belongs to the caller. Routing metadata is included for the same reason: the caller
-interprets.
+belongs to the caller. Routing metadata is included by default for the same reason: the
+caller interprets.
+
+**Output shape is server configuration, not a call parameter.** `model`, `usage` and
+`routing` are useful to an operator measuring cost or debugging prompts, and noise to an
+agent deciding what to do next. A per-call `include` argument was considered and rejected:
+it would put that choice in front of the agent on every call, cost input tokens to
+describe, and make results differ between calls for no reason the agent cares about. The
+operator sets `ASKJEV_INCLUDE` once; the pipeline always produces the full result and the
+server trims it, so the trimming has no reach into the routing logic.
 
 **No `kind` override.** It would save one call when the agent already knows the type, at
 the cost of a second code path and an invitation to misuse. If the router eval shows it is
@@ -274,5 +293,6 @@ keeps input and output aligned by position and lets the agent fix one thing.
 **One tool over `ask` plus `list_rubrics` and `list_models`.** Both lists are static and
 fit in the tool description. Every extra tool costs context in every client that connects.
 
-**stdio only.** Remote HTTP hosting would need infrastructure and per-user auth. The code
-can add a transport later without touching the pipeline.
+**stdio first, HTTP without touching the pipeline.** The first release was stdio only,
+because remote hosting needs infrastructure and per-user auth. The HTTP transport arrived
+as a separate entry point over the same `createServer`; the pipeline did not change.

@@ -134,8 +134,6 @@ One entry per question, in input order.
 
 ```jsonc
 {
-  "model": "jev-1.13",
-  "usage": { "input_tokens": 812, "output_tokens": 64 },
   "answers": [
     {
       "kind": "noul",
@@ -187,6 +185,12 @@ Everything is raw. There is no threshold and no verdict. `confidence` comes stra
 Jev; yes/no answers have no separate confidence because the probability is the signal.
 `routing` exposes how sure Jev was about the question type, and about the rubric when one
 was picked, so a misroute is visible rather than silent.
+
+What else comes back is the operator's choice, not the agent's. `ASKJEV_INCLUDE` is a
+comma-separated list of the optional parts: `routing` (the default), `usage` (tokens summed
+over every Jev call), and `model`. Set it to `usage,routing` to add token counts, or to an
+empty string to get nothing but the answers. The tool description tells the agent what the
+server was configured to emit.
 
 ## How it works
 
@@ -269,12 +273,18 @@ Local, only what the Typesafe SDK already reads from the environment:
 | `TYPESAFE_BASE_URL` | Optional, for proxies and the smoke test stub. |
 | `TYPESAFE_LOG_LEVEL` | Optional. SDK logs go to stderr. |
 
-The server itself has no settings. stdout carries MCP protocol messages only; every
-diagnostic goes to stderr.
+Plus one setting of the server's own:
+
+| Variable | Meaning |
+|---|---|
+| `ASKJEV_INCLUDE` | Optional parts of every result, comma-separated: `model`, `usage`, `routing`. Default `routing`. Empty string for answers only. An unknown name is a startup error. |
+
+stdout carries MCP protocol messages only; every diagnostic goes to stderr.
 
 Hosted, the key travels per request in the `x-api-key` header (or `Authorization:
-Bearer`). `TYPESAFE_BASE_URL` and `TYPESAFE_DEFAULT_MODEL` can be set as Worker vars and
-apply to every caller.
+Bearer`). `TYPESAFE_BASE_URL`, `TYPESAFE_DEFAULT_MODEL` and `ASKJEV_INCLUDE` can be set as
+Worker vars and apply to every caller. The public instance at jev.zacca.dev runs the
+defaults.
 
 ## Evaluation
 
