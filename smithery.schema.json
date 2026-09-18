@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "properties": {
+    "apiKey": {
+      "type": "string",
+      "title": "Typesafe API key",
+      "description": "Your Typesafe AI API key. Forwarded to askjev as the x-api-key header on every request and never stored.",
+      "x-from": {
+        "header": "x-api-key"
+      }
+    }
+  },
+  "required": ["apiKey"]
+}
