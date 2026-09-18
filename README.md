@@ -1,5 +1,9 @@
 # askjev
 
+[![CI](https://github.com/pZacca/askjev/actions/workflows/ci.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/ci.yml) [![Router eval](https://github.com/pZacca/askjev/actions/workflows/eval.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/eval.yml) [![npm](https://img.shields.io/npm/v/askjev)](https://www.npmjs.com/package/askjev) [![Smithery](https://smithery.ai/badge/pzacca/askjev)](https://smithery.ai/servers/pzacca/askjev) [![License](https://img.shields.io/npm/l/askjev)](LICENSE)
+
+[![Claude Code](https://img.shields.io/badge/Claude_Code-supported-blueviolet)](#claude-code) [![Claude Desktop](https://img.shields.io/badge/Claude_Desktop-supported-blueviolet)](#claude-desktop) [![Cursor](https://img.shields.io/badge/Cursor-supported-blueviolet)](#cursor) [![Codex](https://img.shields.io/badge/Codex-supported-blueviolet)](#codex)
+
 Unofficial [MCP](https://modelcontextprotocol.io) server for [Jev](https://docs.typesafe.ai),
 Typesafe AI's System One model. Not affiliated with Typesafe AI.
 
@@ -16,15 +20,44 @@ An agent planning a workflow, asking Jev one question at a time. Every number is
 
 ## Install
 
-Requires Node 22+ and a Typesafe API key in `TYPESAFE_API_KEY`.
+You need a Typesafe API key. The server runs in one of two places; every client below
+supports at least one.
 
-Claude Code:
+- **Hosted.** `https://jev.zacca.dev/mcp` runs this repository on Cloudflare Workers. It keeps
+  nothing: every call builds a Typesafe client from the key you send and forwards the
+  question. Send the key in the `x-api-key` header, or as a bearer token if your client
+  only has that field. The same server is listed on Smithery as
+  [pzacca/askjev](https://smithery.ai/servers/pzacca/askjev).
+- **Local.** `npx -y askjev` runs it on your machine over stdio. Requires Node 22+ and the
+  key in `TYPESAFE_API_KEY`.
+
+### Supported clients
+
+| Client | Local (stdio) | Hosted (HTTP) |
+|---|---|---|
+| [Claude Code](#claude-code) | yes | yes |
+| [Claude Desktop](#claude-desktop) | yes | no, custom connectors cannot send an API key header |
+| [Cursor](#cursor) | yes | yes |
+| [Codex](#codex) | yes | yes, as a bearer token |
+
+Claude Code and Codex were exercised end to end on both transports. Cursor follows its
+documented configuration format.
+
+#### Claude Code
 
 ```sh
+# hosted
+claude mcp add --transport http askjev https://jev.zacca.dev/mcp --header "x-api-key: your-key"
+
+# local
 claude mcp add askjev -e TYPESAFE_API_KEY=your-key -- npx -y askjev
 ```
 
-Claude Desktop, Cursor, and other clients that take a JSON config:
+#### Claude Desktop
+
+Open Settings, Developer, Edit Config. The file is
+`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS and
+`%APPDATA%\Claude\claude_desktop_config.json` on Windows.
 
 ```json
 {
@@ -38,8 +71,36 @@ Claude Desktop, Cursor, and other clients that take a JSON config:
 }
 ```
 
-On Windows some hosts cannot launch `npx` directly. Use `"command": "cmd"` with
-`"args": ["/c", "npx", "-y", "askjev"]`.
+Restart Claude Desktop after saving. On Windows some hosts cannot launch `npx` directly;
+use `"command": "cmd"` with `"args": ["/c", "npx", "-y", "askjev"]`.
+
+#### Cursor
+
+Add to `~/.cursor/mcp.json` for every project, or `.cursor/mcp.json` for one project.
+
+```json
+{
+  "mcpServers": {
+    "askjev": {
+      "url": "https://jev.zacca.dev/mcp",
+      "headers": { "x-api-key": "your-key" }
+    }
+  }
+}
+```
+
+For a local server use the same `command`, `args` and `env` block as Claude Desktop.
+
+#### Codex
+
+```sh
+# hosted: Codex reads the key from an environment variable and sends it as a bearer token
+export TYPESAFE_API_KEY=your-key
+codex mcp add askjev --url https://jev.zacca.dev/mcp --bearer-token-env-var TYPESAFE_API_KEY
+
+# local
+codex mcp add askjev --env TYPESAFE_API_KEY=your-key -- npx -y askjev
+```
 
 ## The tool
 
@@ -199,7 +260,7 @@ others.
 
 ## Configuration
 
-Only what the Typesafe SDK already reads from the environment:
+Local, only what the Typesafe SDK already reads from the environment:
 
 | Variable | Meaning |
 |---|---|
@@ -210,6 +271,10 @@ Only what the Typesafe SDK already reads from the environment:
 
 The server itself has no settings. stdout carries MCP protocol messages only; every
 diagnostic goes to stderr.
+
+Hosted, the key travels per request in the `x-api-key` header (or `Authorization:
+Bearer`). `TYPESAFE_BASE_URL` and `TYPESAFE_DEFAULT_MODEL` can be set as Worker vars and
+apply to every caller.
 
 ## Evaluation
 
@@ -227,6 +292,14 @@ npm run lint
 npm run typecheck
 npm test
 ```
+
+The hosted variant is `src/worker.ts`, bundled and deployed by wrangler from
+`wrangler.jsonc`. `npm run dev` serves it on localhost; `npm run deploy` publishes it to
+the configured domain (needs `wrangler login`).
+
+The Smithery listing points at that domain and takes its configuration form from
+`smithery.schema.json`. After changing the schema, republish with
+`smithery mcp publish https://jev.zacca.dev/mcp -n pzacca/askjev --config-schema smithery.schema.json`.
 
 ## License
 
