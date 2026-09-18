@@ -19,16 +19,25 @@ ${rubricLines}
 
 Every answer carries probabilities and Jev's confidence, plus "routing" showing how the question was interpreted. Read the confidence: a low value means the material does not settle the question, so add context or decide another way.
 
-Requires TYPESAFE_API_KEY in the server's environment.`;
+Requires a Typesafe API key. `;
 
-export function createServer(jev: Jev, version: string): McpServer {
+/** How the caller supplies the Typesafe API key when nothing else is said: the stdio way. */
+export const ENV_KEY_HINT = "Set TYPESAFE_API_KEY in the environment of the askjev process.";
+
+export interface ServerOptions {
+  /** Shown at the end of the tool description and in auth errors. Default: `ENV_KEY_HINT`. */
+  keyHint?: string;
+}
+
+export function createServer(jev: Jev, version: string, options: ServerOptions = {}): McpServer {
+  const keyHint = options.keyHint ?? ENV_KEY_HINT;
   const server = new McpServer({ name: "askjev", version });
 
   server.registerTool(
     "ask",
     {
       title: "Ask Jev",
-      description,
+      description: description + keyHint,
       inputSchema: askInputShape,
       outputSchema: askOutputShape,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -41,7 +50,7 @@ export function createServer(jev: Jev, version: string): McpServer {
           structuredContent: output,
         };
       } catch (error) {
-        return { isError: true, content: [{ type: "text", text: describeError(error) }] };
+        return { isError: true, content: [{ type: "text", text: describeError(error, keyHint) }] };
       }
     },
   );
@@ -49,9 +58,9 @@ export function createServer(jev: Jev, version: string): McpServer {
   return server;
 }
 
-export function describeError(error: unknown): string {
+export function describeError(error: unknown, keyHint = ENV_KEY_HINT): string {
   if (error instanceof AuthenticationError) {
-    return "Jev rejected the API key. Set TYPESAFE_API_KEY in the environment of the askjev process.";
+    return `Jev rejected the API key. ${keyHint}`;
   }
   if (error instanceof APIError) {
     const id = error.requestId ? ` (request ${error.requestId})` : "";
