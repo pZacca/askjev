@@ -185,9 +185,28 @@ not as protocol errors, so the agent sees the message and can recover. Errors th
 one question are entries in `answers`, so one bad question never costs the agent the
 others.
 
+## Transports
+
+Two entry points share everything from `createServer` down.
+
+| Entry | Transport | Where the key comes from |
+|---|---|---|
+| `src/cli.ts` | stdio, one process per client | `TYPESAFE_API_KEY` in the process environment |
+| `src/worker.ts` | Streamable HTTP on Cloudflare Workers, at `https://jev.zacca.dev/mcp` | `x-api-key` header, or `Authorization: Bearer`, per request |
+
+The HTTP handler (`src/http.ts`) is stateless: every request gets a fresh `McpServer` and
+transport, replies as JSON rather than SSE, and builds the Typesafe client lazily from the
+key that request carried. The key is never stored. Initialize and tools/list succeed
+without a key so registries can scan the server; only `ask` fails, with a tool error that
+names the header. The handler is written on web-standard `Request` and `Response`, so it
+also runs on Deno, Bun, or Node 22+ behind any adapter.
+
+The credential hint in the tool description and in auth errors is a `createServer` option,
+so each transport tells the agent the right way to supply the key.
+
 ## Configuration
 
-Only what the Typesafe SDK already reads from the environment:
+Local, only what the Typesafe SDK already reads from the environment:
 
 | Variable | Meaning |
 |---|---|
@@ -199,11 +218,16 @@ Only what the Typesafe SDK already reads from the environment:
 The server itself has no settings. stdout carries MCP protocol messages only; every
 diagnostic goes to stderr.
 
+Hosted, the key travels per request (see Transports). `TYPESAFE_BASE_URL` and
+`TYPESAFE_DEFAULT_MODEL` can be set as Worker vars and apply to every caller.
+
 ## Modules
 
 | File | Responsibility |
 |---|---|
 | `src/cli.ts` | Shebang entry. Builds the server, connects stdio, exits non-zero on startup failure. |
+| `src/http.ts` | Web-standard HTTP handler: routes `/mcp`, reads the key per request, serves a stateless server. |
+| `src/worker.ts` | Cloudflare Workers entry over `http.ts`. Bundled by wrangler, not by tsc. |
 | `src/server.ts` | Creates the `McpServer`, registers `ask`, maps thrown errors to tool errors. |
 | `src/schema.ts` | Zod schemas for the tool input and output, and the TypeScript types derived from them. |
 | `src/ask.ts` | The pipeline: route, pick rubrics, answer, shape. Pure orchestration over a `Jev` adapter. |
