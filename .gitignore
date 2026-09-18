@@ -6,3 +6,4 @@ dist/
 .claude/
 .vscode/
 eval/report/
+.wrangler/
