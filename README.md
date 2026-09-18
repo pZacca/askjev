@@ -1,6 +1,6 @@
 # askjev
 
-[![CI](https://github.com/pZacca/askjev/actions/workflows/ci.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/ci.yml) [![Router eval](https://github.com/pZacca/askjev/actions/workflows/eval.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/eval.yml) [![npm](https://img.shields.io/npm/v/askjev)](https://www.npmjs.com/package/askjev) [![Smithery](https://smithery.ai/badge/pzacca/askjev)](https://smithery.ai/servers/pzacca/askjev) [![License](https://img.shields.io/npm/l/askjev)](LICENSE)
+[![CI](https://github.com/pZacca/askjev/actions/workflows/ci.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/ci.yml) [![Router eval](https://github.com/pZacca/askjev/actions/workflows/eval.yml/badge.svg)](https://github.com/pZacca/askjev/actions/workflows/eval.yml) [![npm](https://img.shields.io/npm/v/askjev)](https://www.npmjs.com/package/askjev) [![smithery badge](https://smithery.ai/badge/pzacca/askjev)](https://smithery.ai/servers/pzacca/askjev) [![License](https://img.shields.io/npm/l/askjev)](LICENSE)
 
 [![Claude Code](https://img.shields.io/badge/Claude_Code-supported-blueviolet)](#claude-code) [![Claude Desktop](https://img.shields.io/badge/Claude_Desktop-supported-blueviolet)](#claude-desktop) [![Cursor](https://img.shields.io/badge/Cursor-supported-blueviolet)](#cursor) [![Codex](https://img.shields.io/badge/Codex-supported-blueviolet)](#codex)
 
