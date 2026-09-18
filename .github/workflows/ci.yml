@@ -60,3 +60,8 @@ jobs:
       - name: Verify the live endpoint
         run: |
           curl -sSf https://jev.zacca.dev/ | tee /dev/stderr | grep -q '"name":"askjev"'
+      # Smithery keeps a snapshot of the tool taken at publish time, so re-scan the new Worker.
+      - name: Refresh the Smithery listing
+        run: npx --yes smithery@1 mcp publish https://jev.zacca.dev/mcp -n pzacca/askjev --config-schema smithery.schema.json
+        env:
+          SMITHERY_API_KEY: ${{ secrets.SMITHERY_API_KEY }}

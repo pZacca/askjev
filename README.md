@@ -318,8 +318,8 @@ git tag v0.2.0 && git push origin main v0.2.0
 publishes to npm with provenance, and creates the GitHub release with generated notes.
 
 The Smithery listing points at that domain and takes its configuration form from
-`smithery.schema.json`. After changing the schema, republish with
-`smithery mcp publish https://jev.zacca.dev/mcp -n pzacca/askjev --config-schema smithery.schema.json`.
+`smithery.schema.json`. Smithery stores a snapshot of the tool taken at publish time, so
+the same `deploy` job republishes the listing after every deploy to keep it current.
 
 ## License
 
